@@ -1,0 +1,45 @@
+create a new category column based on the values in the product_name column, 
+where if the product_name contains the word "Bike", the new column should have the value "Bike", 
+and if not, it should have the value "Accessories
+
+power BI:
+
+>ContainsString = IF(CONTAINSSTRING('Product'[Product_Name],"Bike")=TRUE(),"Bike","Accessories")
+
+>ContainsStringExact = SWITCH(TRUE(), CONTAINSSTRINGEXACT('Product'[Product_Name],"Bike"),"Bike","Accessories")
+
+In Sql Server:
+
+alter table product add Categogy varchar(15) 
+
+update product set Categogy =  CASE 
+        WHEN product_name LIKE '%Bike%' THEN 'Bike'
+        ELSE 'Accessories'
+    END
+
+In PySpark:
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import when, col
+
+# Initialize Spark session
+spark = SparkSession.builder \
+    .appName("Category Column Example") \
+    .getOrCreate()
+
+# Sample data
+data = [("abcBike",),
+        ("Bike123",),
+        ("DEF",),
+        ("LFG",),
+        ("Bike",)]
+
+# Create DataFrame
+df = spark.createDataFrame(data, ["product_name"])
+
+# Create new category column based on conditions
+df = df.withColumn("category",
+                   when(col("product_name").like("%Bike%"), "Bike")
+                   .otherwise("Accessories"))
+
+# Show DataFrame
+df.show()
