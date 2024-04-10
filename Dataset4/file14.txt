@@ -1,0 +1,129 @@
+select * from emp
+select * from dept
+1/*DISPLAY ALL THE EMPLOYEES WHOSE DEPARTMET NAMES ENDING 'S'*/
+select * from emp as e inner join  dept as d on e.dept_no=d.deptno
+where d.dname like '%s'
+
+select * from emp where dept_no in (select deptno from dept where  dname like '%s')
+
+2/*QUERY TO DISPLAY THE EMPLOYEE NAMES WHO IS HAVING MAXIMUM SALARY IN DEPT NAME "ACCOUNTING"*/
+
+select * from emp where sal=
+(select max(sal) as MAXIMUM_SALARY from emp 
+where dept_no in (select deptno from dept where dname='Accounting'))
+
+3/*QUERY TO DISPLAY THE DEPT NAME WHO IS HAVING HIGHEST COMMISSION*/
+select * from dept where deptno =( 
+select dept_no from emp where comm=(select max(comm) from emp))
+
+4/*QUERY TO DISPLAY THE EMPLOYEE NAMES WHOSE DEPARTMENT NAME HAS 2ND CHARACTER AS 'O'.*/
+
+select * from emp where dept_no in (select deptno from dept where dname like '_o%')
+
+5./*QUERY TO DISPLAY ALL THE EMPLOYEES WHO’S DEPT NUMBER IS SAME AS SCOTT.*/
+select * from emp where dept_no=( 
+select dept_no from emp where ename='scott')
+
+6./*QUERY TO DISPLAY ALL THE EMPLOYEES IN 'OPERATIONS AND ACCOUNTING' DEPT.*/
+select * from emp where dept_no in(
+select deptno from dept where dname in ('OPERATIONS','ACCOUNTING'))
+
+7./*LIST THE EMPLOYEES WHO HAS SALARY GREATER THAN MILLER*/
+select * from emp where sal>(select sal from emp where ename='miller')
+
+8./*LIST DEPARTMENT NAME HAVING ATLEAST 3 SALESMAN*/
+select * from dept where deptno in (
+select dept_no from emp
+where job='salesman'
+group by dept_no
+having count(*)>=3)
+
+9./*DISPLAY THE DNAME OF AN EMPLOYEES WHO HAS NO REPORTING MANAGER.*/
+select * from dept where deptno in
+(select dept_no from emp where mgr is null)
+
+10./*LIST ALL THE EMPLOYEES WHO ARE REPORTING TO JONES MANAGER*/
+select * from emp where mgr=(
+select mgr from emp where ename='jones')
+
+11./*LIST EMPLOYEES FROM RESEARCH & ACCOUNTING HAVING ATLEAST 2 REPORTING.*/
+select * from emp where emp_no in(
+select mgr from emp
+group by mgr
+having count(*)>=2) and 
+ dept_no in (
+select deptno from dept where dname in('RESEARCH','ACCOUNTING'))
+
+12./*DISPLAY LOCATION OF EMPLOYEE WHOSE SALARY IS MINIMUM SALARY BUT SALARY IS GREATER THAN 2000*/
+select * from dept where deptno in (
+select dept_no from  emp where sal =(select min(sal) from emp where sal>2000))
+
+13./*DISPLAY THE DEPARTNAME OF THE EMPLOYEE WHOSE NAME DOES NOT
+STARTS WITH S AND SALARY BETWEEN 1500 TO 3000.*/
+select * from emp
+select * from dept
+select * from dept where deptno in(
+select dept_no from emp where ename not like 's%' and (sal between 1500 and 3000))
+
+14./*DISPLAY THE LOCATION OF AN EMPLOYEE IN ACCOUNTING DEPARTMENT.*/
+select loc from dept where deptno in(
+select dept_no from emp where dept_no in (
+select deptno from dept where dname='ACCOUNTING'))
+
+15./*DISPLAY THE DEPARTMENT ‘S LOCATION THAT IS HAVING GREATER THAN FOUR EMPLOYEES IN IT.*/
+select * from dept where deptno in(
+select dept_no from emp
+group by dept_no
+having count(*)>4)
+
+
+16./*WRITE A QUERY TO DISPLAY ALL THE EMPLOYEE WHOSE 
+JOB NOT SAME AS ALLEN AND SALARY IS GREATER THAN MARTIN.*/
+select * from emp where job not in (
+select job from emp where ename = 'allen') and sal>(
+select sal from emp where ename='martin')
+
+
+17./*DISPLAY ALL THE EMPLOYEES WHO IS HAVING LOCATION IS SAME AS ADAM'S MANAGER?*/
+select * from emp
+select * from dept where deptno=(
+select dept_no from emp where emp_no=( 
+select mgr from emp where ename='adams'))
+
+18./*DISPLAY THE JOB, MANAGER NUMBER OF EMPLOYEES WHO IS WORKING FOR JONES?*/
+select job from emp where emp_no in(
+select mgr from emp where ename='jones')
+
+19./*DISPLAY THE EMPLOYEE NAMES, HIGHER DATE, COMMISSION OF FORD'S MANAGER?*/
+select * from emp where emp_no in(
+select mgr from emp where ename='ford')
+
+20./*DISPLAY THE NUMBER OF EMPLOYEES WHO ARE GETTING SALARY LESS THAN THE BLAKE'S MANAGER*/
+select * from emp
+select * from emp where sal <(
+select sal from emp where emp_no in(
+select mgr from emp where ename='blake'))
+
+21./*LIST EMPLOYEES WHO LOCATED IN CHICAGO AND THEIR COMMISSION IS ZERO.*/
+select * from emp where comm=0 and dept_no=(select deptno from dept where loc='chicago')
+
+22./*LIST EMPLOYEES WHO WORK FOR SALES DEPARTMENT AND THEIR SALARY 
+GREATER THAN AVERAGE SALARY OF THEIR DEPARTMENT.*/
+select * from emp where dept_no in(
+select deptno from dept where dname='sales') and
+sal>(select avg(sal) from emp where dept_no in  (select deptno from dept where dname='sales'))
+
+23./*LIST EMPLOYEES WHO ARE WORKING IN RESEARCH DEPARTMENT AND THEY ARE MANAGER.*/
+with cte as(
+select * from emp where dept_no in (
+select deptno from dept where dname='RESEARCH'))
+select * from cte where job='Manager'
+
+24/*DISPLAY DEPARTMENT NAME OF THE EMPLOYEES WHO EARN COMMISSION.*/
+select * from dept where deptno in(
+select dept_no from emp where comm is not null)
+
+25./*DISPLAY DEPARTMENT NAME OF THE EMPLOYEE WHO EARN 
+MAXIMUM SALARY AND HAVE NO REPORTING MANAGER.*/
+select * from dept where deptno in( 
+select dept_no from emp where  mgr is null and sal in (select max(sal) from emp))
